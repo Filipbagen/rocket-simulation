@@ -10,17 +10,10 @@ import { rocketEquation } from './js/rocketEquation'
 // styles
 import './style.css'
 
+var requestId;
+
 // Scene
 const scene = new THREE.Scene()
-
-// Create our sphere
-// const geometry = new THREE.SphereGeometry(3, 64, 64)
-// const material = new THREE.MeshStandardMaterial({
-//     color: '#00ff83'
-// })
-// const mesh = new THREE.Mesh(geometry, material)
-// scene.add(mesh)
-
 
 // Sizes
 const sizes = {
@@ -49,12 +42,24 @@ loader.load('rocket.glb', function (gltf) {
     rocket.position.y = 0;
     rocket.position.z = 0;
 
-    rocket.rotation.x = -90
+    rocket.rotation.x = -3.14*0.5
 
     rocket.scale.set(.005, .005, .005)
 
     scene.add(rocket);
 });
+
+// Axis
+const axesHelper = new THREE.AxesHelper( 500 );
+scene.add( axesHelper );
+
+// Temp floor 
+const geometry = new THREE.PlaneGeometry( 1000, 1000 );
+const material = new THREE.MeshBasicMaterial( {color: 'white', side: THREE.DoubleSide} );
+const plane = new THREE.Mesh( geometry, material );
+scene.add( plane );
+plane.rotation.x = 3.14*0.5;
+plane.position.y = -3;
 
 
 // Renderer
@@ -122,24 +127,71 @@ let vy0 = 0; // Initial y velocity
 let vz0 = 0; // Initial z velocity
 
 // Initial conditions
-y0 = [x0, y0, z0, vx0, vy0, vz0]
+let y1 = [x0, y0, z0, vx0, vy0, vz0]
+let i = 0; 
+let dz; 
 
+function flyBoi(){
 
-let dz = rk4(rocketEquation, [0, 10], y0, 10)
-console.log(dz)
+	dz = rk4(rocketEquation, [0, i], y1, 10)
 
-const clock = new THREE.Clock()
-
-
-const loop = () => {
-    // setupKeyControls()
-    // setupKeyLogger()
-
-    renderer.render(scene, camera)
-    window.requestAnimationFrame(loop)
+	rocket.position.y += 0.01*dz[i][2]
+	camera.position.y += 0.01*dz[i][2]
+	rocket.rotation.z += 0.05;
+	light.position.y += 0.01*dz[i][2]
+	
+	y1 = [x0, dz[i][2], z0, vx0, vy0, vz0]
+	i++ 
 }
 
+const clock = new THREE.Clock()
+let reqAnim;
 
-loop()
+const loop = () => {
+    setupKeyControls()
+    //setupKeyLogger()
+
+   if(rocket){ 
+   	flyBoi()
+   }
+
+    renderer.render(scene, camera)
+    reqAnim = window.requestAnimationFrame(loop)
+}
+
+//----------------------------------------
+document.getElementById('start').addEventListener("click", function (){
+    loop();
+  })
+
+
+document.getElementById('stop').addEventListener("click", function (){
+  	window.cancelAnimationFrame(reqAnim);
+  })
+
+
+// Restart the game
+  document.getElementById("restart").addEventListener("click", function restart() {
+
+  	window.cancelAnimationFrame(reqAnim);
+	
+	 x0 = 0; 
+	 y0 = 0; 
+	 z0 = 0; 
+	 vx0 = 0; 
+	 vy0 = 0; 
+	 vz0 = 0; 
+
+	rocket.position.y = 0
+	camera.position.y = 0
+	rocket.rotation.z = 0
+	light.position.y = 0
+
+	i = 0
+
+	loop()
+  })
+//----------------------------------------
+
 
 

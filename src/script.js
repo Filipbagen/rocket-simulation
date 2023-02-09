@@ -132,6 +132,8 @@ function updateAnimation(){
 	
 	y1 = [x0, dz[i][2], z0, vx0, vy0, vz0]
 	i++ 
+
+	displayData(); // Output data to display console
 }
 
 const clock = new THREE.Clock()
@@ -180,5 +182,9 @@ document.getElementById('stop').addEventListener("click", function (){
 	window.cancelAnimationFrame(reqAnim);
   })
 
+function displayData(){ 
+	document.getElementById("height").innerHTML= "Current height: " + dz[i][2] + " m";
+	document.getElementById("velocity").innerHTML= "Current velocity: " + dz[i][5] + " m/s"; // Vilket index är hastigheten?
+}
 
 

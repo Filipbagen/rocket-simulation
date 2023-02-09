@@ -31,9 +31,41 @@ body {
     bottom: 0;
     margin-bottom: 20px; 
     margin-left: 20px;
-    width:425px;
+    width:relative; 
     border-radius: 13px;
 }
+
+.height { 
+    z-index: 1;
+    padding: 30px;
+    position: relative;
+    background-color: white;
+    position: fixed;
+    bottom: 0;
+    margin-bottom: 20px; 
+    margin-left: 500px;
+    width:340px; 
+    border-radius: 13px;
+    text-decoration-color: black; 
+    font-family: "JetBrains Mono",monospace;
+    font-size: 18px;
+ }
+
+ .velocity { 
+    z-index: 1;
+    padding: 30px;
+    position: relative;
+    background-color: white;
+    position: fixed;
+    bottom: 0;
+    margin-bottom: 20px; 
+    margin-left: 900px;
+    width:340px; 
+    border-radius: 13px;
+    text-decoration-color: black; 
+    font-family: "JetBrains Mono",monospace;
+    font-size: 18px;
+ }
 
 #start {
   align-items: center;

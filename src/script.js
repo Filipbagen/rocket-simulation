@@ -37,7 +37,7 @@ var loader = new GLTFLoader();
 let rocket;
 loader.load('rocket.glb', function (gltf) {
 
-    rocket = gltf.scene;  // sword 3D object is loaded
+    rocket = gltf.scene;  
     rocket.position.x = 0;
     rocket.position.y = 0;
     rocket.position.z = 0;
@@ -54,8 +54,8 @@ const axesHelper = new THREE.AxesHelper( 500 );
 scene.add( axesHelper );
 
 // Temp floor 
-const geometry = new THREE.PlaneGeometry( 1000, 1000 );
-const material = new THREE.MeshBasicMaterial( {color: 'white', side: THREE.DoubleSide} );
+const geometry = new THREE.PlaneGeometry( 15, 15 );
+const material = new THREE.MeshBasicMaterial( {color: 'grey', side: THREE.DoubleSide} );
 const plane = new THREE.Mesh( geometry, material );
 scene.add( plane );
 plane.rotation.x = 3.14*0.5;
@@ -71,6 +71,7 @@ renderer.render(scene, camera)
 document.body.appendChild(renderer.domElement)
 const controls = new OrbitControls(camera, renderer.domElement)
 controls.enableDamping = true
+
 
 // Resize
 window.addEventListener('resize', () => {
@@ -160,6 +161,11 @@ const loop = () => {
 }
 
 //----------------------------------------
+document.getElementById('load').addEventListener("click", function (){
+    loop();
+    window.cancelAnimationFrame(reqAnim);
+  })
+
 document.getElementById('start').addEventListener("click", function (){
     loop();
   })
@@ -169,8 +175,6 @@ document.getElementById('stop').addEventListener("click", function (){
   	window.cancelAnimationFrame(reqAnim);
   })
 
-
-// Restart the game
   document.getElementById("restart").addEventListener("click", function restart() {
 
   	window.cancelAnimationFrame(reqAnim);
@@ -191,6 +195,7 @@ document.getElementById('stop').addEventListener("click", function (){
 
 	loop()
   })
+
 //----------------------------------------
 
 

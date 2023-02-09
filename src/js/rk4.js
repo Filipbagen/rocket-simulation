@@ -2,12 +2,12 @@
 import { sumArray } from "./sumArray"
 import { multiplyArray } from "./multiplyArray"
 
-// Constants
-let t = []
-let z = []
-
 // rk4 from mp3
 function rk4(diffEquation, tspan, z0, n) {
+    // Constants
+    let t = []
+    let z = []
+
     z[0] = z0
     let h = (tspan[1] - tspan[0]) / n
 
@@ -18,7 +18,7 @@ function rk4(diffEquation, tspan, z0, n) {
         // t = [0, 10, 20]
     }
 
-    for (let i = 0; i < n; i++) {
+    for (let i = 0; i < (n - 1); i++) {
 
         let k1 = diffEquation(z[i])
         let k2 = diffEquation(sumArray(z[i], multiplyArray(k1, (h / 2))))

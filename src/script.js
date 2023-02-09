@@ -10,8 +10,6 @@ import { rocketEquation } from './js/rocketEquation'
 // styles
 import './style.css'
 
-var requestId;
-
 // Scene
 const scene = new THREE.Scene()
 
@@ -31,8 +29,7 @@ const camera = new THREE.PerspectiveCamera(45, sizes.width / sizes.height)
 camera.position.z = 20
 scene.add(camera)
 
-
-
+// Rocket loader 
 var loader = new GLTFLoader();
 let rocket;
 loader.load('rocket.glb', function (gltf) {
@@ -49,16 +46,16 @@ loader.load('rocket.glb', function (gltf) {
     scene.add(rocket);
 });
 
-// Axis
+// Axis 
 const axesHelper = new THREE.AxesHelper( 500 );
 scene.add( axesHelper );
 
-// Temp floor 
+// Temp floor mesh
 const geometry = new THREE.PlaneGeometry( 15, 15 );
-const material = new THREE.MeshBasicMaterial( {color: 'grey', side: THREE.DoubleSide} );
+const material = new THREE.MeshBasicMaterial( {color: 'white', side: THREE.DoubleSide} );
 const plane = new THREE.Mesh( geometry, material );
 scene.add( plane );
-plane.rotation.x = 3.14*0.5;
+plane.rotation.x = Math.PI * 0.5;
 plane.position.y = -3;
 
 
@@ -73,7 +70,7 @@ const controls = new OrbitControls(camera, renderer.domElement)
 controls.enableDamping = true
 
 
-// Resize
+// Resize window 
 window.addEventListener('resize', () => {
     // Update sizes
     sizes.width = window.innerWidth
@@ -85,8 +82,8 @@ window.addEventListener('resize', () => {
     renderer.setSize(sizes.width, sizes.height)
 })
 
+// Key controls - Arrows 
 function setupKeyControls() {
-    // var cube = scene.getObjectByName('cube');
     document.onkeydown = function (e) {
         switch (e.key) {
             case "ArrowUp":
@@ -111,14 +108,6 @@ function setupKeyControls() {
     };
 }
 
-function setupKeyLogger() {
-    document.onkeydown = function (e) {
-        console.log(e);
-    }
-}
-
-// _________________________________________
-
 // Define initial conditions
 let x0 = 0; // Initial x position
 let y0 = 0; // Initial y position
@@ -132,7 +121,7 @@ let y1 = [x0, y0, z0, vx0, vy0, vz0]
 let i = 0; 
 let dz; 
 
-function flyBoi(){
+function updateAnimation(){
 
 	dz = rk4(rocketEquation, [0, i], y1, 10)
 
@@ -149,28 +138,27 @@ const clock = new THREE.Clock()
 let reqAnim;
 
 const loop = () => {
+   
     setupKeyControls()
-    //setupKeyLogger()
-
-   if(rocket){ 
-   	flyBoi()
-   }
-
+  
+   if(rocket){ updateAnimation() }
     renderer.render(scene, camera)
     reqAnim = window.requestAnimationFrame(loop)
 }
 
-//----------------------------------------
+
+// Load rocket button 
 document.getElementById('load').addEventListener("click", function (){
     loop();
     window.cancelAnimationFrame(reqAnim);
   })
 
+// Start sim button 
 document.getElementById('start').addEventListener("click", function (){
     loop();
   })
 
-
+// Stop sim button 
 document.getElementById('stop').addEventListener("click", function (){
   	window.cancelAnimationFrame(reqAnim);
   })
@@ -179,12 +167,7 @@ document.getElementById('stop').addEventListener("click", function (){
 
   	window.cancelAnimationFrame(reqAnim);
 	
-	 x0 = 0; 
-	 y0 = 0; 
-	 z0 = 0; 
-	 vx0 = 0; 
-	 vy0 = 0; 
-	 vz0 = 0; 
+	 x0 = 0, y0 = 0, z0 = 0, vx0 = 0, vy0 = 0, vz0 = 0 // Reset inital
 
 	rocket.position.y = 0
 	camera.position.y = 0
@@ -193,10 +176,9 @@ document.getElementById('stop').addEventListener("click", function (){
 
 	i = 0
 
-	loop()
+	loop() 
+	window.cancelAnimationFrame(reqAnim);
   })
-
-//----------------------------------------
 
 
 

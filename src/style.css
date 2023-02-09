@@ -9,9 +9,11 @@ body {
     overflow-x: hidden;
 }
 
-#titleinfo{ 
+.titleinfo{ 
     font-family: "Farfetch Basis","Helvetica Neue",Arial,sans-serif;
-    padding: 40px;
+    padding-bottom: 10px;
+    color: white;
+
 }
 
 .webgl {
@@ -24,12 +26,14 @@ body {
     z-index: 1;
     position: relative;
     background-color: white;
-    padding: 20px;
+    padding: 10px;
     background-color: #3b484f;
+    position: fixed;
+  bottom: 0;
 }
 
 #start {
-  background-color: #222;
+  background-color: black;
   border-radius: 4px;
   border-style: none;
   box-sizing: border-box;
@@ -56,7 +60,7 @@ body {
 }
 
 #restart {
-  background-color: #222;
+  background-color: black;
   border-radius: 4px;
   border-style: none;
   box-sizing: border-box;
@@ -83,7 +87,7 @@ body {
 }
 
 #stop {
-  background-color: #222;
+  background-color: black;
   border-radius: 4px;
   border-style: none;
   box-sizing: border-box;

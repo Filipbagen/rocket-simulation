@@ -67,6 +67,39 @@ body {
     font-size: 18px;
  }
 
+ .mass { 
+  z-index: 1;
+  padding: 30px;
+  position: relative;
+  background-color: white;
+  position: fixed;
+  bottom: 0;
+  margin-bottom: 20px; 
+  margin-left: 1400px;
+  width:240px; 
+  border-radius: 13px;
+  text-decoration-color: black; 
+  font-family: "JetBrains Mono",monospace;
+  font-size: 18px;
+}
+
+.thrust { 
+  z-index: 1;
+  padding: 30px;
+  margin-top:20px; 
+  position: relative;
+  background-color: white;
+  position: fixed;
+  bottom: 1;
+  margin-bottom: 20px; 
+  margin-left: 1400px;
+  width:240px; 
+  border-radius: 13px;
+  text-decoration-color: black; 
+  font-family: "JetBrains Mono",monospace;
+  font-size: 18px;
+}
+
 #start {
   align-items: center;
   appearance: none;

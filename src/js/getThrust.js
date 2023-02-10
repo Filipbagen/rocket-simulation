@@ -12,6 +12,8 @@ const getThrust = (altitude) => {
     let P0 = output[1]
     let thrust = M * V_e + (P_e - P0) * A_e
 
+    document.getElementById("thrust").innerHTML= "Current thrust: " + thrust + " kg";
+
     return thrust // Thrust in Newton
 }
 

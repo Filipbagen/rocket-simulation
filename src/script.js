@@ -61,7 +61,8 @@ plane.position.y = -3;
 
 // Renderer
 const canvas = document.querySelector(".webgl")
-const renderer = new THREE.WebGL1Renderer({ canvas })
+var renderer = new THREE.WebGLRenderer( { alpha: true } );
+// const renderer = new THREE.WebGL1Renderer({ canvas })
 renderer.setSize(sizes.width, sizes.height)
 //renderer.render(scene, camera)
 
@@ -72,6 +73,7 @@ controls.enableDamping = true
 
 // Resize window 
 window.addEventListener('resize', () => {
+
     // Update sizes
     sizes.width = window.innerWidth
     sizes.height = window.innerHeight
@@ -134,6 +136,7 @@ function updateAnimation(){
 	i++ 
 
 	displayData(); // Output data to display console
+    updateBackground(); // Change background color after certain height.
 }
 
 const clock = new THREE.Clock()
@@ -143,8 +146,8 @@ const loop = () => {
    
     setupKeyControls()
     
-  
    if(rocket){ updateAnimation() }
+
     renderer.render(scene, camera)
     reqAnim = window.requestAnimationFrame(loop)
 }
@@ -189,6 +192,25 @@ document.getElementById('stop').addEventListener("click", function (){
 function displayData(){ 
 	document.getElementById("height").innerHTML= "Current height: " + dz[i][2] + " m";
 	document.getElementById("velocity").innerHTML= "Current velocity: " + dz[i][5] + " m/s"; // Vilket index är hastigheten?
+}
+
+
+// Load texture
+const skyTexture = new THREE.TextureLoader().load( 'sky.png');
+const atmoTexture = new THREE.TextureLoader().load( 'atmo.png' );
+const spaceTexture = new THREE.TextureLoader().load( 'space.png' );
+
+// Background change
+function updateBackground(){ 
+
+    if(dz[i][2] < 1000){ 
+        scene.background = skyTexture
+        scene.backgroundBlurriness = 100;
+    }else if (dz[i][2] > 600 & dz[i][2] < 1400){ 
+        scene.background = atmoTexture
+    }else { 
+        scene.background = spaceTexture
+    }
 }
 
 

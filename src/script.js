@@ -4,6 +4,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 
 
 // functions
+import { smoke } from './js/smoke'
 import { rk4 } from './js/rk4'
 import { rocketEquation } from './js/rocketEquation'
 
@@ -35,10 +36,9 @@ let rocket;
 loader.load('rocket.glb', function (gltf) {
 
     rocket = gltf.scene;  
-    rocket.position.x = 0;
-    rocket.position.y = 0;
-    rocket.position.z = -0.05;
-
+    rocket.position.x = -0.2;
+    rocket.position.y = -0.2;
+    rocket.position.z = 0.0
     rocket.rotation.x = -3.14*0.5
 
     rocket.scale.set(.005, .005, .005)
@@ -59,6 +59,32 @@ plane.rotation.x = Math.PI * 0.5;
 plane.position.y = -3;
 
 
+// smoke
+
+function addSphere(dz){
+
+        var geometry   = new THREE.SphereGeometry(1, 1, 1)
+        var material = new THREE.MeshBasicMaterial( {color: 'red'} );
+        var sphere = new THREE.Mesh(geometry, material)
+
+        sphere.position.x = 0
+        sphere.position.y = dz
+
+
+        //add the sphere to the scene
+        scene.add( sphere );
+
+}
+
+
+function removeEntity(object) {
+    var selectedObject = scene.getObjectByName(object);
+    scene.remove( selectedObject );
+}
+
+
+
+
 // Renderer
 const canvas = document.querySelector(".webgl")
 const renderer = new THREE.WebGL1Renderer({ canvas })
@@ -66,8 +92,7 @@ renderer.setSize(sizes.width, sizes.height)
 //renderer.render(scene, camera)
 
 document.body.appendChild(renderer.domElement)
-const controls = new OrbitControls(camera, renderer.domElement)
-controls.enableDamping = true
+
 
 
 // Resize window 
@@ -82,31 +107,6 @@ window.addEventListener('resize', () => {
     renderer.setSize(sizes.width, sizes.height)
 })
 
-// Key controls - Arrows 
-function setupKeyControls() {
-    document.onkeydown = function (e) {
-        switch (e.key) {
-            case "ArrowUp":
-                rocket.position.y += 1;
-                break;
-            case "ArrowDown":
-                rocket.position.y -= 1;
-                break;
-            case "ArrowLeft":
-                rocket.position.x -= 1;
-                break;
-            case "ArrowRight":
-                rocket.position.x += 1;
-                break;
-            case "+":
-                rocket.position.z += 1;
-                break;
-            case "-":
-                rocket.position.z -= 1;
-                break;
-        }
-    };
-}
 
 // Define initial conditions
 let x0 = 0; // Initial x position
@@ -120,6 +120,7 @@ let vz0 = 0; // Initial z velocity
 let y1 = [x0, y0, z0, vx0, vy0, vz0]
 let i = 0; 
 let dz; 
+let s
 
 function updateAnimation(){
 
@@ -127,38 +128,43 @@ function updateAnimation(){
 
 	rocket.position.y += 0.01*dz[i][2]
 	camera.position.y += 0.01*dz[i][2]
-	rocket.rotation.z += 0.05;
+	rocket.rotation.z += 0.001;
 	light.position.y += 0.01*dz[i][2]
-	
+
+	s = addSphere(0.01*dz[i][2]);
+    
 	y1 = [x0, dz[i][2], z0, vx0, vy0, vz0]
 	i++ 
 
 	displayData(); // Output data to display console
+    
+    
 }
 
 const clock = new THREE.Clock()
 let reqAnim;
 
 const loop = () => {
-   
-    setupKeyControls()
     
-  
+    removeEntity(s)
    if(rocket){ updateAnimation() }
     renderer.render(scene, camera)
+    
     reqAnim = window.requestAnimationFrame(loop)
 }
 
+let rocketsound = new Audio('sound.wav');
 
-// Load rocket button 
-// document.getElementById('load').addEventListener("click", function (){
-//     loop();
-//     window.cancelAnimationFrame(reqAnim);
-//   })
+
+function stopAudio(audio) {
+    rocketsound.pause();
+    rocketsound.currentTime = 0;
+}
 
 // Start sim button 
 document.getElementById('start').addEventListener("click", function (){
     loop();
+    rocketsound.play();
     this.disabled = true;
   })
 
@@ -166,6 +172,7 @@ document.getElementById('start').addEventListener("click", function (){
 document.getElementById('stop').addEventListener("click", function (){
   	window.cancelAnimationFrame(reqAnim);
     document.getElementById('start').disabled = false;
+    stopAudio(rocketsound);
 
   })
 
@@ -190,5 +197,7 @@ function displayData(){
 	document.getElementById("height").innerHTML= "Current height: " + dz[i][2] + " m";
 	document.getElementById("velocity").innerHTML= "Current velocity: " + dz[i][5] + " m/s"; // Vilket index är hastigheten?
 }
+
+
 
 

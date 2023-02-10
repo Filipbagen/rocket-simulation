@@ -12,7 +12,7 @@ const fuelMass = (altitude) => {
         m_fuel = 0;
     }
 
-    document.getElementById("mass").innerHTML= "Fuel left: " + m_fuel + " kg";
+    document.getElementById("mass").innerHTML= "Fuel left: " + Math.floor(m_fuel) + " kg";
     console.log(m_fuel);
 
     return m_fuel

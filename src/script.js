@@ -27,7 +27,7 @@ scene.add(light)
 // Camera
 const camera = new THREE.PerspectiveCamera(45, sizes.width / sizes.height)
 camera.position.z = 20
-scene.add(camera)
+scene.add(camera) 
 
 // Rocket loader 
 var loader = new GLTFLoader();
@@ -46,13 +46,30 @@ loader.load('rocket.glb', function (gltf) {
     scene.add(rocket);
 });
 
+// Load building 
+let building;
+const createBuilding = () => {
+    loader.load('NewBuilding.glb', function (gltf) {
+
+        building = gltf.scene; 
+        building.position.x = -1.95;
+        building.position.y = -1.5;
+        building.position.z = 8;
+        building.rotation.y = 3*Math.PI/2;
+        building.scale.set(0.05, 0.05, 0.05)
+
+        scene.add(building);
+    })
+}
+createBuilding()
+
 // Axis 
 const axesHelper = new THREE.AxesHelper( 500 );
 scene.add( axesHelper );
 
 // Temp floor mesh
-const geometry = new THREE.PlaneGeometry( 15, 15 );
-const material = new THREE.MeshBasicMaterial( {color: 'white', side: THREE.DoubleSide} );
+const geometry = new THREE.PlaneGeometry( 100, 100 );
+const material = new THREE.MeshBasicMaterial( {color: '#a9a9a9', side: THREE.DoubleSide} );
 const plane = new THREE.Mesh( geometry, material );
 scene.add( plane );
 plane.rotation.x = Math.PI * 0.5;
@@ -142,6 +159,28 @@ function updateAnimation(){
 const clock = new THREE.Clock()
 let reqAnim;
 
+let rocketsound = new Audio('sound.wav');
+
+function stopAudio(audio) {
+    rocketsound.pause();
+    rocketsound.currentTime = 0;
+}
+
+// Start sim button 
+document.getElementById('startAudio').addEventListener("click", function (){
+    loop();
+    rocketsound.play();
+    this.disabled = true;
+  })
+
+// Stop sim button 
+document.getElementById('stopAudio').addEventListener("click", function (){
+  	window.cancelAnimationFrame(reqAnim);
+    document.getElementById('stopAudio').disabled = false;
+    stopAudio(rocketsound);
+
+  })
+
 const loop = () => {
    
     setupKeyControls()
@@ -190,8 +229,8 @@ document.getElementById('stop').addEventListener("click", function (){
   })
 
 function displayData(){ 
-	document.getElementById("height").innerHTML= "Current height: " + dz[i][2] + " m";
-	document.getElementById("velocity").innerHTML= "Current velocity: " + dz[i][5] + " m/s"; // Vilket index är hastigheten?
+	document.getElementById("height").innerHTML= "Current height: " + Math.floor(dz[i][2]) + " m";
+	document.getElementById("velocity").innerHTML= "Current velocity: " + Math.floor(dz[i][5]) + " m/s"; // Vilket index är hastigheten?
 }
 
 

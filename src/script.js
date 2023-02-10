@@ -37,7 +37,7 @@ loader.load('rocket.glb', function (gltf) {
     rocket = gltf.scene;  
     rocket.position.x = 0;
     rocket.position.y = 0;
-    rocket.position.z = 0;
+    rocket.position.z = -0.05;
 
     rocket.rotation.x = -3.14*0.5
 
@@ -63,7 +63,7 @@ plane.position.y = -3;
 const canvas = document.querySelector(".webgl")
 const renderer = new THREE.WebGL1Renderer({ canvas })
 renderer.setSize(sizes.width, sizes.height)
-renderer.render(scene, camera)
+//renderer.render(scene, camera)
 
 document.body.appendChild(renderer.domElement)
 const controls = new OrbitControls(camera, renderer.domElement)
@@ -142,6 +142,7 @@ let reqAnim;
 const loop = () => {
    
     setupKeyControls()
+    
   
    if(rocket){ updateAnimation() }
     renderer.render(scene, camera)

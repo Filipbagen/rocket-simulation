@@ -150,19 +150,22 @@ const loop = () => {
 
 
 // Load rocket button 
-document.getElementById('load').addEventListener("click", function (){
-    loop();
-    window.cancelAnimationFrame(reqAnim);
-  })
+// document.getElementById('load').addEventListener("click", function (){
+//     loop();
+//     window.cancelAnimationFrame(reqAnim);
+//   })
 
 // Start sim button 
 document.getElementById('start').addEventListener("click", function (){
     loop();
+    this.disabled = true;
   })
 
 // Stop sim button 
 document.getElementById('stop').addEventListener("click", function (){
   	window.cancelAnimationFrame(reqAnim);
+    document.getElementById('start').disabled = false;
+
   })
 
   document.getElementById("restart").addEventListener("click", function restart() {

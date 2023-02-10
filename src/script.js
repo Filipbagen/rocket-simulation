@@ -32,7 +32,7 @@ const createScene = () => {
 
     // Camera
     camera = new THREE.PerspectiveCamera(fieldOfView, aspectRatio, nearPlane, farPlane)
-    camera.position.z = 20
+    camera.position.z = 40
     scene.add(camera)
 
     // Resize
@@ -54,20 +54,24 @@ const createScene = () => {
     document.body.appendChild(renderer.domElement)
 
     // Orbit controls
-    // const controls = new OrbitControls(camera, renderer.domElement)
-    // controls.enableDamping = true
+    const controls = new OrbitControls(camera, renderer.domElement)
+    controls.enableDamping = true
 }
 
 // Light
 const createLight = () => {
     let light = new THREE.PointLight(0xffffff, 1, 100)
-    light.position.z = 30
+    light.position.z = -20
     scene.add(light)
+
+    const lightA = new THREE.AmbientLight( 0x404040 ); // soft white light
+    lightA.position.z = -20
+    scene.add( lightA );
 }
 
 
 // 3D models
-let ball, rocket
+let ball, rocket, building
 
 const createBall = () => {
     // Create our sphere
@@ -80,25 +84,44 @@ const createBall = () => {
 }
 
 const createRocket = () => {
-    loader.load('rocket.glb', function (gltf) {
+    loader.load('RealFalcon9.glb', function (gltf) {
 
         rocket = gltf.scene;  // sword 3D object is loaded
         rocket.position.x = 0;
         rocket.position.y = 0;
-        rocket.position.z = 0;
-        rocket.rotation.x = -90
-        rocket.scale.set(.005, .005, .005)
+        rocket.position.z = -1.5;
+        rocket.rotation.x = -1.55
+        rocket.rotation.y = 0
+        rocket.scale.set(0.3, 0.3, 0.3)
 
         scene.add(rocket);
     })
 }
 
+const createBuilding = () => {
+    loader.load('NewBuilding.glb', function (gltf) {
+
+        building = gltf.scene; 
+        building.position.x = 0;
+        building.position.y = -6;
+        building.position.z = 7;
+        building.rotation.x = 0
+        building.scale.set(0.2, 0.2, 0.2)
+
+        scene.add(building);
+    })
+}
+
+
+
+
+
 // _________________________________________
 
 // Define initial conditions
-let x0 = 0; // Initial x position
-let y0 = 0; // Initial y position
-let z0 = 0; // Initial z position
+let x0 = 10; // Initial x position
+let y0 = 10; // Initial y position
+let z0 = 10; // Initial z position
 let vx0 = 0; // Initial x velocity
 let vy0 = 0; // Initial y velocity
 let vz0 = 0; // Initial z velocity
@@ -144,6 +167,8 @@ const init = () => {
     // createBall()
     createRocket()
     // updateRocket()
+    createBuilding()
+
     loop()
 }
 

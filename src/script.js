@@ -191,13 +191,6 @@ const loop = () => {
     reqAnim = window.requestAnimationFrame(loop)
 }
 
-
-// Load rocket button 
-// document.getElementById('load').addEventListener("click", function (){
-//     loop();
-//     window.cancelAnimationFrame(reqAnim);
-//   })
-
 // Start sim button 
 document.getElementById('start').addEventListener("click", function (){
     loop();
@@ -252,4 +245,15 @@ function updateBackground(){
     }
 }
 
+// Change camera view buttons
+document.getElementById('camera1').addEventListener("click", function (){
+    camera.position.z = 20
+    camera.rotation.x = 0 
+    camera.position.x = 0
+})
 
+document.getElementById('camera2').addEventListener("click", function (){
+    camera.position.z = 3
+    camera.rotation.x = -0.5 
+    camera.position.x = 0.2
+})

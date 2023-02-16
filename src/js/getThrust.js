@@ -8,7 +8,7 @@ const A_e = 0.7 // Exit area
 
 const getThrust = (altitude) => {
 
-    let output = getAirPressure(getAirPressure) // Atmotsphere pressure
+    let output = getAirPressure(getAirPressure(altitude)) // Atmotsphere pressure
     let P0 = output[1]
     let thrust = M * V_e + (P_e - P0) * A_e
 

@@ -140,6 +140,8 @@ let y1 = [x0, y0, z0, vx0, vy0, vz0]
 let i = 0; 
 let dz; 
 
+//ANIMATION UPDATE
+
 function updateAnimation(){
 
 	dz = rk4(rocketEquation, [0, i], y1, 10)
@@ -152,12 +154,33 @@ function updateAnimation(){
 	y1 = [x0, dz[i][2], z0, vx0, vy0, vz0]
 	i++ 
 
+    console.log(dz[i][5])
+
 	displayData(); // Output data to display console
     updateBackground(); // Change background color after certain height.
 }
 
-const clock = new THREE.Clock()
 let reqAnim;
+
+//MAIN ANIMATION LOOP
+
+const loop = () => {
+   
+    setupKeyControls()
+    
+   if(rocket){ updateAnimation() }
+
+    renderer.render(scene, camera)
+    reqAnim = window.requestAnimationFrame(loop)
+}
+
+
+
+
+
+
+/////////////////BUTTONS///////////////////////////////////////////////////////////////
+
 
 let rocketsound = new Audio('sound.wav');
 
@@ -175,21 +198,13 @@ document.getElementById('startAudio').addEventListener("click", function (){
 
 // Stop sim button 
 document.getElementById('stopAudio').addEventListener("click", function (){
-  	window.cancelAnimationFrame(reqAnim);
+  	//window.cancelAnimationFrame(reqAnim);
     document.getElementById('stopAudio').disabled = false;
     stopAudio(rocketsound);
 
   })
 
-const loop = () => {
-   
-    setupKeyControls()
-    
-   if(rocket){ updateAnimation() }
 
-    renderer.render(scene, camera)
-    reqAnim = window.requestAnimationFrame(loop)
-}
 
 // Start sim button 
 document.getElementById('start').addEventListener("click", function (){
@@ -226,6 +241,18 @@ function displayData(){
 	document.getElementById("velocity").innerHTML= "Current velocity: " + Math.floor(dz[i][5]) + " m/s"; // Vilket index är hastigheten?
 }
 
+// Change camera view buttons
+document.getElementById('camera1').addEventListener("click", function (){
+    camera.position.z = 20
+    camera.rotation.x = 0 
+    camera.position.x = 0
+})
+
+document.getElementById('camera2').addEventListener("click", function (){
+    camera.position.z = 3
+    camera.rotation.x = -0.5 
+    camera.position.x = 0.2
+})
 
 // Load texture
 const skyTexture = new THREE.TextureLoader().load( 'sky.png');
@@ -244,16 +271,3 @@ function updateBackground(){
         scene.background = spaceTexture
     }
 }
-
-// Change camera view buttons
-document.getElementById('camera1').addEventListener("click", function (){
-    camera.position.z = 20
-    camera.rotation.x = 0 
-    camera.position.x = 0
-})
-
-document.getElementById('camera2').addEventListener("click", function (){
-    camera.position.z = 3
-    camera.rotation.x = -0.5 
-    camera.position.x = 0.2
-})

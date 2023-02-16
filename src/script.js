@@ -101,31 +101,6 @@ window.addEventListener('resize', () => {
     renderer.setSize(sizes.width, sizes.height)
 })
 
-// Key controls - Arrows 
-function setupKeyControls() {
-    document.onkeydown = function (e) {
-        switch (e.key) {
-            case "ArrowUp":
-                rocket.position.y += 1;
-                break;
-            case "ArrowDown":
-                rocket.position.y -= 1;
-                break;
-            case "ArrowLeft":
-                rocket.position.x -= 1;
-                break;
-            case "ArrowRight":
-                rocket.position.x += 1;
-                break;
-            case "+":
-                rocket.position.z += 1;
-                break;
-            case "-":
-                rocket.position.z -= 1;
-                break;
-        }
-    };
-}
 
 // Define initial conditions
 let x0 = 0; // Initial x position
@@ -165,8 +140,7 @@ let reqAnim;
 //MAIN ANIMATION LOOP
 
 const loop = () => {
-   
-    setupKeyControls()
+
     
    if(rocket){ updateAnimation() }
 

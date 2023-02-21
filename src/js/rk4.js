@@ -2,42 +2,28 @@
 import { sumArray } from "./sumArray"
 import { multiplyArray } from "./multiplyArray"
 
-// rk4 from mp3
-function rk4(diffEquation, tspan, z0, n) {
-    // Constants
-    let t = []
-    let z = []
+function rk4(diffEquation, z0, h) {
+    let z
 
-    z[0] = z0
-    let h = (tspan[1] - tspan[0]) / n
+    let k1 = diffEquation(z0)
+    let k2 = diffEquation(sumArray(z0, multiplyArray(k1, (h / 2))))
+    let k3 = diffEquation(sumArray(z0, multiplyArray(k2, (h / 2))))
+    let k4 = diffEquation(sumArray(z0, multiplyArray(k3, h)))
 
-    let i = 0
-    while (i <= n) {
-        t[i] = tspan[0] + i * h
-        i++
-        // t = [0, 10, 20]
-    }
-
-    for (let i = 0; i < (n - 1); i++) {
-
-        let k1 = diffEquation(z[i])
-        let k2 = diffEquation(sumArray(z[i], multiplyArray(k1, (h / 2))))
-        let k3 = diffEquation(sumArray(z[i], multiplyArray(k2, (h / 2))))
-        let k4 = diffEquation(sumArray(z[i], multiplyArray(k3, h)))
-
-        z.push(sumArray(z[i],
-            multiplyArray(
-                sumArray(
-                    sumArray(k1, multiplyArray(k2, 2)),
-                    sumArray(k4, multiplyArray(k3, 2))
-                ),
-                (h / 6)
-            )
+    // Next step
+    z = (sumArray(z0,
+        multiplyArray(
+            sumArray(
+                sumArray(k1, multiplyArray(k2, 2)),
+                sumArray(k4, multiplyArray(k3, 2))
+            ),
+            (h / 6)
         )
-        )
-    }
+    )
+    )
 
     return z;
+
 }
 
 export { rk4 }

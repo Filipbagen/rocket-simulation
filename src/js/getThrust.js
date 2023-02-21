@@ -12,7 +12,14 @@ const getThrust = (altitude) => {
     let P0 = output[1]
     let thrust = M * V_e + (P_e - P0) * A_e
 
-    return thrust // Thrust in Newton
+    if (altitude < 1000) {
+        return thrust // Thrust in Newton
+
+    } else {
+        return 0
+    }
+
+
 }
 
 export { getThrust }

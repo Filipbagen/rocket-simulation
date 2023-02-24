@@ -119,11 +119,10 @@ y0 = [x0, y0, z0, vx0, vy0, vz0]
 
 let clock = new THREE.Clock()
 
-let dz = rk4(rocketEquation, y0, 0.016, clock)
-
+let dz = rk4(y0, 0.016, clock)
 
 const updateRocket = (delta) => {
-    dz = rk4(rocketEquation, dz, delta, clock)
+    dz = rk4(dz, delta, clock)
     ball.position.y = dz[2]
 }
 

@@ -10,8 +10,8 @@ const phiInput = document.querySelector("#phi")
 // Constants
 const Cd = 0.6 // Drag coefficient
 const A = 1 // Reference area of the rocket
-let theta = 0 // Angle in radians of thrust vector in y-z plane
-let phi = 0 // Angle in radians of thrust vector in x-y plane
+let theta // Angle in radians of thrust vector in y-z plane
+let phi // Angle in radians of thrust vector in x-y plane
 
 // Inputs array of position and velocity (6 values)
 function rocketEquation(y, clock) {
@@ -29,8 +29,6 @@ function rocketEquation(y, clock) {
     let Fthrust = getThrust(clock.elapsedTime)
     let m = rocketMass(fuelMass(clock.elapsedTime))
     let g = getGravity(altitude) // DONE
-
-    // console.log(rho)
 
     dy[0] = y[3] // x velocity
     dy[1] = y[4] // y velocity

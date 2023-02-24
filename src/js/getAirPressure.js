@@ -2,8 +2,7 @@
 // https://www.grc.nasa.gov/www/k-12/airplane/atmosmet.html
 
 // constants
-let T   // Temperature
-let p   // pressure
+let T, p   // Temperature & pressure
 
 const getAirPressure = (altitude) => {
     let output = []

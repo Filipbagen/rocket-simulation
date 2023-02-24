@@ -4,25 +4,34 @@ import { getGravity } from "./getGravity"
 import { getThrust } from "./getThrust"
 import { rocketMass, fuelMass } from "./mass"
 
+const thetaInput = document.querySelector("#theta")
+const phiInput = document.querySelector("#phi")
+
 
 // Constants
 const Cd = 0.6 // Drag coefficient
 const A = 1 // Reference area of the rocket
-const theta = 0 // Angle in radians of thrust vector in y-z plane
-const phi = 0 // Angle in radians of thrust vector in x-y plane
+let theta = 0 // Angle in radians of thrust vector in y-z plane
+let phi = 0 // Angle in radians of thrust vector in x-y plane
 
 // Inputs array of position and velocity (6 values)
-function rocketEquation(y) {
+function rocketEquation(y, clock) {
+
+    // console.log(input.value)
+    theta = thetaInput.value
+    // phi = phiInput.value
 
     let altitude = y[2]
     let dy = new Array(6).fill(0); // Initialize output
 
-    let rho = getAirDensity(altitude) // Air density
+    let rho = getAirDensity(altitude) // Air density, DONE
     let v = Math.sqrt(Math.pow(y[3], 2) + Math.pow(y[4], 2) + Math.pow(y[5], 2)) // Velocity
     let Fdrag = (Cd * A * rho * Math.pow(v, 2)) / 2 // Drag force on the rocket
-    let Fthrust = getThrust(altitude)
-    let m = rocketMass(fuelMass(altitude))
-    let g = getGravity(altitude)
+    let Fthrust = getThrust(clock.elapsedTime)
+    let m = rocketMass(fuelMass(clock.elapsedTime))
+    let g = getGravity(altitude) // DONE
+
+    // console.log(rho)
 
     dy[0] = y[3] // x velocity
     dy[1] = y[4] // y velocity

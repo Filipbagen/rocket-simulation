@@ -1,3 +1,6 @@
+// Source
+// https://www.grc.nasa.gov/www/k-12/rocket/rktthsum.html
+
 import { getAirPressure } from "./getAirPressure";
 
 // constants
@@ -6,13 +9,21 @@ const V_e = 3000 // Velocity of exhaust
 const P_e = 0.7 // Exhaust pressure
 const A_e = 0.7 // Exit area
 
-const getThrust = (altitude) => {
+const firstStageBurnTime = 162
+const secondStageBurnTime = 397
 
-    let output = getAirPressure(getAirPressure) // Atmotsphere pressure
+const getThrust = (elapsedTime) => {
+
+    let output = getAirPressure(elapsedTime) // Atmotsphere pressure, DONE
+
     let P0 = output[1]
     let thrust = M * V_e + (P_e - P0) * A_e
 
-    if (altitude < 1000) {
+    // True thrust
+    // approx. 7 561 976.72
+    // second stage thrust approx. 934 kN
+
+    if (elapsedTime < firstStageBurnTime) {
         return thrust // Thrust in Newton
 
     } else {

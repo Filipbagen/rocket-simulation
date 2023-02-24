@@ -120,15 +120,13 @@ let vz0 = 0 // Initial z velocity
 // Initial conditions
 y0 = [x0, y0, z0, vx0, vy0, vz0]
 
-
-let dz = rk4(rocketEquation, y0, 0.016)
-
 let clock = new THREE.Clock()
+
+let dz = rk4(rocketEquation, y0, 0.016, clock)
 
 
 const updateRocket = (delta) => {
-    dz = rk4(rocketEquation, dz, delta)
-
+    dz = rk4(rocketEquation, dz, delta, clock)
     ball.position.y = dz[2]
 }
 

@@ -1,32 +1,42 @@
-const fuelMass = (altitude) => {
+// Source
+// https://www.spaceflightinsider.com/hangar/falcon-9/
+
+const fuelMass = (elapsedTime) => {
 
     //  Constant parameters
-    let m_initial = 25000 // initial fuel mass in kg
-    let burn_rate = 1451.496 // fuel burn rate in kg / s
+    let firstStagePropellantMass = 395700
+    let secondStagePropellantMass = 92670
+
+    let burnRate = 1451.496 // fuel burn rate in kg / s
 
     // Calculate fuel mass
-    let m_fuel = m_initial - burn_rate * altitude
+    let fuelMass = firstStagePropellantMass - burnRate * elapsedTime
 
     // Check for negative mass
-    if (m_fuel < 0) {
-        m_fuel = 0;
+    if (fuelMass < 0) {
+        fuelMass = 0;
     }
 
-    return m_fuel
+    return fuelMass
 }
 
 
 const rocketMass = (fuelLeft) => {
+    const payloadToLEO = 22800
+    const payloadToGTO = 8300
+    const payloadToMARS = 4020
 
-    let rocketMass = 3900
+    let firstStageRocketMass = 25600
+    let secondStageRocketMass = 3900
+
     const tankMass = 500
-    const cargo = 25000
+    let rocketMass
 
     if (fuelLeft > 0) {
-        rocketMass = rocketMass + fuelLeft + tankMass + cargo
+        rocketMass = firstStageRocketMass + payloadToLEO + fuelLeft
 
     } else { // fuelLeft == 0
-        rocketMass = rocketMass - tankMass + cargo
+        rocketMass = secondStageRocketMass + payloadToLEO
     }
 
     return rocketMass

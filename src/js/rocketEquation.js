@@ -7,7 +7,6 @@ import { rocketMass, fuelMass } from "./mass"
 const thetaInput = document.querySelector("#theta")
 const phiInput = document.querySelector("#phi")
 
-
 // Constants
 const Cd = 0.6 // Drag coefficient
 const A = 1 // Reference area of the rocket
@@ -19,7 +18,7 @@ function rocketEquation(y, clock) {
 
     // console.log(input.value)
     theta = thetaInput.value
-    // phi = phiInput.value
+    phi = phiInput.value
 
     let altitude = y[2]
     let dy = new Array(6).fill(0); // Initialize output

@@ -3,6 +3,8 @@ import { sumArray } from "./sumArray"
 import { multiplyArray } from "./multiplyArray"
 import { rocketEquation } from "./rocketEquation"
 
+let values = []
+
 function rk4(z0, h, clock) {
     let z
 
@@ -22,6 +24,14 @@ function rk4(z0, h, clock) {
         )
     )
     )
+
+
+    // if (clock.elapsedTime < 9.8) {
+    //     values.push(z)
+
+    // } else if (clock.elapsedTime > 10.2 && clock.elapsedTime < 10.3) {
+    //     console.log(values)
+    // }
 
     return z;
 

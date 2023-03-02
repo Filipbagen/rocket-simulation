@@ -31,8 +31,8 @@ const createScene = () => {
 
     // Camera
     camera = new THREE.PerspectiveCamera(fieldOfView, aspectRatio, nearPlane, farPlane)
-    camera.position.z = 500
-    camera.position.y = 200
+    camera.position.z = 200
+    camera.position.y = 100
     scene.add(camera)
 
     // Resize
@@ -68,7 +68,7 @@ const createLight = () => {
 
 
 // 3D models
-let ball, rocket, newBall
+let ball, rocket, newBall, earth, sun
 
 const createBall = () => {
     // Create our sphere
@@ -94,16 +94,65 @@ const createNewBall = () => {
 const createRocket = () => {
     loader.load('rocket.glb', function (gltf) {
 
-        rocket = gltf.scene;  // sword 3D object is loaded
-        rocket.position.x = 0;
-        rocket.position.y = 0;
-        rocket.position.z = 0;
+        rocket = gltf.scene
         rocket.rotation.x = -90
         rocket.scale.set(.005, .005, .005)
 
-        scene.add(rocket);
+        scene.add(rocket)
     })
 }
+
+const createEarth = () => {
+    loader.load('earth.glb', function (gltf) {
+
+        earth = gltf.scene
+        earth.scale.set(10, 10, 10)
+        earth.position.y = -100
+        earth.position.x = 30
+
+        scene.add(earth)
+    })
+}
+
+const createSun = () => {
+    loader.load('sun.glb', function (gltf) {
+
+        sun = gltf.scene
+        sun.position.set(100, 300, 0)
+        sun.scale.set(20, 20, 20)
+
+        scene.add(sun)
+    })
+}
+
+function getRandomStarField(numberOfStars, width, height) {
+    var canvas = document.createElement('CANVAS');
+
+    canvas.width = width;
+    canvas.height = height;
+
+    var ctx = canvas.getContext('2d');
+
+    ctx.fillStyle = "black";
+    ctx.fillRect(0, 0, width, height);
+
+    for (var i = 0; i < numberOfStars; ++i) {
+        var radius = Math.random() * 20;
+        var x = Math.floor(Math.random() * width);
+        var y = Math.floor(Math.random() * height);
+
+        ctx.beginPath();
+        ctx.arc(x, y, radius, 0, 2 * Math.PI, false);
+        ctx.fillStyle = 'red';
+        ctx.fill();
+    }
+
+    var texture = new THREE.Texture(canvas);
+    texture.needsUpdate = true;
+    return texture;
+}
+
+
 
 
 // Define initial conditions
@@ -123,7 +172,20 @@ let dz = rk4(y0, 0.016, clock)
 
 const updateRocket = (delta) => {
     dz = rk4(dz, delta, clock)
-    ball.position.y = dz[2]
+
+    if (rocket) {
+        rocket.position.y = dz[2]
+        rocket.rotation.y = document.querySelector("#theta").value
+
+        if (rocket.position.y <= 0) {
+            dz[0] = dz[1] = dz[2] = 0
+
+        }
+    }
+}
+
+const updateCamera = () => {
+    camera.position.y = dz[2]
 }
 
 
@@ -132,6 +194,7 @@ const loop = () => {
     // setupKeyControls(ball)
 
     updateRocket(clock.getDelta())
+    updateCamera()
 
     renderer.render(scene, camera)
     window.requestAnimationFrame(loop)
@@ -140,9 +203,20 @@ const loop = () => {
 const init = () => {
     createScene()
     createLight()
-    createBall()
+    // createEarth()
+    // createSun()
+    // createBall()
     createNewBall()
-    // createRocket()
+    createRocket()
+
+    // Stars
+    let skyBox = new THREE.BoxGeometry(120, 120, 120);
+    let skyBoxMaterial = new THREE.MeshBasicMaterial({
+        map: getRandomStarField(600, 2048, 2048),
+        side: THREE.BackSide
+    })
+    let sky = new THREE.Mesh(skyBox, skyBoxMaterial)
+    scene.add(sky)
 
     loop()
 }

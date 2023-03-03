@@ -4,9 +4,8 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 
 // functions
 import { rk4 } from './js/rk4'
-import { rocketEquation } from './js/rocketEquation'
 import { setupKeyControls, setupKeyLogger } from './setupKey'
-import { addSphere, generateStars } from './js/createStars'
+import { generateStars } from './js/createStars'
 
 // styles
 import './style.css'
@@ -93,11 +92,11 @@ const createNewBall = () => {
 }
 
 const createRocket = () => {
-    loader.load('rocket.glb', function (gltf) {
+    loader.load('falcon9.glb', function (gltf) {
 
         rocket = gltf.scene
-        rocket.rotation.x = -90
-        rocket.scale.set(.005, .005, .005)
+        // rocket.rotation.x = -90
+        // rocket.scale.set(.005, .005, .005)
 
         scene.add(rocket)
     })
@@ -175,7 +174,7 @@ const updateRocket = (delta) => {
         rocket.position.z = dz[1]
         rocket.position.y = dz[2]
 
-        rocket.rotation.y = document.querySelector("#theta").value
+        rocket.rotation.x = document.querySelector("#theta").value
         rocket.rotation.z = document.querySelector("#phi").value
 
         if (rocket.position.y <= 0) {

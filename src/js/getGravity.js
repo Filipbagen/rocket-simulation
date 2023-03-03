@@ -1,3 +1,6 @@
+// Source
+// https://en.wikipedia.org/wiki/Gravity_of_Earth
+
 // Constants
 const earthRadius = 6.371e6
 const accelerationAtSurface = 9.82

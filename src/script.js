@@ -89,6 +89,7 @@ const createNewBall = () => {
     })
     newBall = new THREE.Mesh(geometry, material)
     newBall.position.y = 100
+    // newBall.position.z = -1000
     scene.add(newBall)
 }
 
@@ -200,22 +201,19 @@ const updateCamera = () => {
 function addSphere() {
 
     // The loop will move from z position of -1000 to z position 1000, adding a random particle at each position. 
-    for (var z = -1000; z < 1000; z += 20) {
+    for (let z = -1000; z < -100; z += 10) {
 
         // Make a sphere (exactly the same as before). 
-        var geometry = new THREE.SphereGeometry(0.5, 32, 32)
-        var material = new THREE.MeshBasicMaterial({ color: 0xffffff });
-        var sphere = new THREE.Mesh(geometry, material)
+        let geometry = new THREE.SphereGeometry(1, 16, 16)
+        let material = new THREE.MeshBasicMaterial({ color: 0xffffff });
+        let sphere = new THREE.Mesh(geometry, material)
 
-        // This time we give the sphere random x and y positions between -500 and 500
-        sphere.position.x = Math.random() * 1000 - 500;
-        sphere.position.y = Math.random() * 1000 - 500;
+        // This time we give the sphere random x and y positions
+        sphere.position.x = Math.random() * window.innerWidth - window.innerWidth / 2
+        sphere.position.y = Math.random() * window.innerHeight - window.innerHeight / 2
 
         // Then set the z position to where it is in the loop (distance of camera)
         sphere.position.z = z;
-
-        // scale it up a bit
-        sphere.scale.x = sphere.scale.y = 2;
 
         //add the sphere to the scene
         scene.add(sphere);
@@ -226,19 +224,33 @@ function addSphere() {
 }
 
 function starOutsideScreen(star) {
+    let removeLeft = 1
+    let removeRight = 2
+    let removeTop = 3
+    let removeDown = 4
+    let margin = 200
 
+    // returns true if stars are outside view + margin and false if stars can be seen
     if (rocket) {
-        if (
-            star.position.y < rocket.position.y - window.innerHeight / 2 ||
-            star.position.y > rocket.position.y + window.innerHeight / 2 ||
-            star.position.x < rocket.position.x - window.innerWidth / 2 ||
-            star.position.x > rocket.position.x + window.innerWidth / 2
-        ) {
-            return true
+        if (star.position.y < rocket.position.y - window.innerHeight / 2 - margin) {
+            return removeDown
 
-        } else {
-            return false
+        } else if (star.position.y > rocket.position.y + window.innerHeight / 2 + margin) {
+            return removeTop
+
+        } else if (star.position.x < rocket.position.x - window.innerWidth / 2 - margin) {
+            return removeLeft
+
+        } else if (star.position.x > rocket.position.x + window.innerWidth / 2 + margin) {
+            return removeRight
         }
+
+        // return (
+        //     star.position.y < rocket.position.y - window.innerHeight / 2 ||
+        //     star.position.y > rocket.position.y + window.innerHeight / 2 ||
+        //     star.position.x < rocket.position.x - window.innerWidth / 2 ||
+        //     star.position.x > rocket.position.x + window.innerWidth / 2
+        // )
     }
 
 
@@ -246,36 +258,37 @@ function starOutsideScreen(star) {
 }
 
 
-function filterStars() {
+
+
+function generateStars() {
+    // must be less than margin
+    let lessMargin = 100
+
     for (let i = 0; i < stars.length; i++) {
 
-        if (rocket && starOutsideScreen(stars[i])) {
-            stars[i].position.x = rocket.position.x + Math.random() * 1000 - 500
-            stars[i].position.y = rocket.position.y + Math.random() * 1000 - 500
+        if (rocket) {
+            if (starOutsideScreen(stars[i]) == 4) {
+                // Add top
+                stars[i].position.y = rocket.position.y + window.innerHeight / 2 + lessMargin * Math.random()
+
+            } else if (starOutsideScreen(stars[i]) == 3) {
+                // Add down
+                stars[i].position.y = rocket.position.y - window.innerHeight / 2 - lessMargin * Math.random()
+
+            } else if (starOutsideScreen(stars[i]) == 1) {
+                // Add right
+                stars[i].position.x = rocket.position.x + window.innerHeight / 2 + lessMargin * Math.random()
+
+            } else if ((starOutsideScreen(stars[i]) == 2)) {
+                // Add left
+                stars[i].position.x = rocket.position.x - window.innerHeight / 2 - lessMargin * Math.random()
+            }
+
+            // stars[i].position.x = rocket.position.x + Math.random() * window.innerWidth + window.innerWidth / 2
+            // stars[i].position.y = rocket.position.y + Math.random() * window.innerHeight + window.innerHeight / 2
         }
     }
 }
-
-function animateStars() {
-
-    // loop through each star
-    for (var i = 0; i < stars.length; i++) {
-
-        let star = stars[i];
-
-        // and move it forward dependent on the mouseY position. 
-        // star.position.z += i / 10;
-
-        // if the particle is too close move it to the back
-        if (star.position.z > 1000) star.position.z -= 2000;
-
-    }
-
-}
-
-
-
-
 
 
 
@@ -285,7 +298,7 @@ const loop = () => {
 
     updateRocket(clock.getDelta())
     updateCamera()
-    filterStars()
+    generateStars()
 
     renderer.render(scene, camera)
     window.requestAnimationFrame(loop)

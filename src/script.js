@@ -6,7 +6,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { rk4 } from './js/rk4'
 import { rocketEquation } from './js/rocketEquation'
 import { setupKeyControls, setupKeyLogger } from './setupKey'
-import { createStars } from './createStars'
+import { addSphere, generateStars } from './js/createStars'
 
 // styles
 import './style.css'
@@ -89,7 +89,6 @@ const createNewBall = () => {
     })
     newBall = new THREE.Mesh(geometry, material)
     newBall.position.y = 100
-    // newBall.position.z = -1000
     scene.add(newBall)
 }
 
@@ -127,34 +126,30 @@ const createSun = () => {
     })
 }
 
-function getRandomStarField(numberOfStars, width, height) {
-    var canvas = document.createElement('CANVAS');
+const createStars = () => {
 
-    canvas.width = width;
-    canvas.height = height;
+    // The loop will move from z position of -1000 to z position 1000, adding a random particle at each position. 
+    for (let z = -1000; z < -100; z += 10) {
 
-    var ctx = canvas.getContext('2d');
+        // Make a sphere (exactly the same as before). 
+        let geometry = new THREE.SphereGeometry(1, 8, 8)
+        let material = new THREE.MeshBasicMaterial({ color: 0xffffff });
+        let star = new THREE.Mesh(geometry, material)
 
-    ctx.fillStyle = "black";
-    ctx.fillRect(0, 0, width, height);
+        // This time we give the sphere random x and y positions
+        star.position.x = Math.random() * window.innerWidth - window.innerWidth / 2
+        star.position.y = Math.random() * window.innerHeight - window.innerHeight / 2
 
-    for (var i = 0; i < numberOfStars; ++i) {
-        var radius = Math.random() * 20;
-        var x = Math.floor(Math.random() * width);
-        var y = Math.floor(Math.random() * height);
+        // Then set the z position to where it is in the loop (distance of camera)
+        star.position.z = z;
 
-        ctx.beginPath();
-        ctx.arc(x, y, radius, 0, 2 * Math.PI, false);
-        ctx.fillStyle = 'red';
-        ctx.fill();
+        //add the sphere to the scene
+        scene.add(star);
+
+        //finally push it to the stars array 
+        stars.push(star);
     }
-
-    var texture = new THREE.Texture(canvas);
-    texture.needsUpdate = true;
-    return texture;
 }
-
-
 
 
 // Define initial conditions
@@ -176,18 +171,23 @@ const updateRocket = (delta) => {
     dz = rk4(dz, delta, clock)
 
     if (rocket) {
+        rocket.position.x = dz[0]
+        rocket.position.z = dz[1]
         rocket.position.y = dz[2]
+
         rocket.rotation.y = document.querySelector("#theta").value
+        rocket.rotation.z = document.querySelector("#phi").value
 
         if (rocket.position.y <= 0) {
-            dz[0] = dz[1] = dz[2] = 0
-
+            dz[0] = dz[1] = dz[2] = dz[3] = dz[4] = dz[5] = 0
         }
     }
 }
 
 const updateCamera = () => {
+    camera.position.x = dz[0]
     camera.position.y = dz[2]
+    // camera.position.z = dz[1]
 }
 
 
@@ -198,97 +198,6 @@ const updateCamera = () => {
 
 
 
-function addSphere() {
-
-    // The loop will move from z position of -1000 to z position 1000, adding a random particle at each position. 
-    for (let z = -1000; z < -100; z += 10) {
-
-        // Make a sphere (exactly the same as before). 
-        let geometry = new THREE.SphereGeometry(1, 16, 16)
-        let material = new THREE.MeshBasicMaterial({ color: 0xffffff });
-        let sphere = new THREE.Mesh(geometry, material)
-
-        // This time we give the sphere random x and y positions
-        sphere.position.x = Math.random() * window.innerWidth - window.innerWidth / 2
-        sphere.position.y = Math.random() * window.innerHeight - window.innerHeight / 2
-
-        // Then set the z position to where it is in the loop (distance of camera)
-        sphere.position.z = z;
-
-        //add the sphere to the scene
-        scene.add(sphere);
-
-        //finally push it to the stars array 
-        stars.push(sphere);
-    }
-}
-
-function starOutsideScreen(star) {
-    let removeLeft = 1
-    let removeRight = 2
-    let removeTop = 3
-    let removeDown = 4
-    let margin = 200
-
-    // returns true if stars are outside view + margin and false if stars can be seen
-    if (rocket) {
-        if (star.position.y < rocket.position.y - window.innerHeight / 2 - margin) {
-            return removeDown
-
-        } else if (star.position.y > rocket.position.y + window.innerHeight / 2 + margin) {
-            return removeTop
-
-        } else if (star.position.x < rocket.position.x - window.innerWidth / 2 - margin) {
-            return removeLeft
-
-        } else if (star.position.x > rocket.position.x + window.innerWidth / 2 + margin) {
-            return removeRight
-        }
-
-        // return (
-        //     star.position.y < rocket.position.y - window.innerHeight / 2 ||
-        //     star.position.y > rocket.position.y + window.innerHeight / 2 ||
-        //     star.position.x < rocket.position.x - window.innerWidth / 2 ||
-        //     star.position.x > rocket.position.x + window.innerWidth / 2
-        // )
-    }
-
-
-
-}
-
-
-
-
-function generateStars() {
-    // must be less than margin
-    let lessMargin = 100
-
-    for (let i = 0; i < stars.length; i++) {
-
-        if (rocket) {
-            if (starOutsideScreen(stars[i]) == 4) {
-                // Add top
-                stars[i].position.y = rocket.position.y + window.innerHeight / 2 + lessMargin * Math.random()
-
-            } else if (starOutsideScreen(stars[i]) == 3) {
-                // Add down
-                stars[i].position.y = rocket.position.y - window.innerHeight / 2 - lessMargin * Math.random()
-
-            } else if (starOutsideScreen(stars[i]) == 1) {
-                // Add right
-                stars[i].position.x = rocket.position.x + window.innerHeight / 2 + lessMargin * Math.random()
-
-            } else if ((starOutsideScreen(stars[i]) == 2)) {
-                // Add left
-                stars[i].position.x = rocket.position.x - window.innerHeight / 2 - lessMargin * Math.random()
-            }
-
-            // stars[i].position.x = rocket.position.x + Math.random() * window.innerWidth + window.innerWidth / 2
-            // stars[i].position.y = rocket.position.y + Math.random() * window.innerHeight + window.innerHeight / 2
-        }
-    }
-}
 
 
 
@@ -298,7 +207,7 @@ const loop = () => {
 
     updateRocket(clock.getDelta())
     updateCamera()
-    generateStars()
+    generateStars(rocket, stars)
 
     renderer.render(scene, camera)
     window.requestAnimationFrame(loop)
@@ -314,7 +223,7 @@ const init = () => {
     // createBall()
     createNewBall()
     createRocket()
-    addSphere()
+    createStars()
 
     // Stars
     // let skyBox = new THREE.BoxGeometry(120, 120, 120);

@@ -174,8 +174,8 @@ const updateRocket = (delta) => {
         rocket.position.z = dz[1]
         rocket.position.y = dz[2]
 
-        rocket.rotation.x = document.querySelector("#theta").value
-        rocket.rotation.z = document.querySelector("#phi").value
+        rocket.rotation.z = document.querySelector("#theta").value
+        rocket.rotation.y = document.querySelector("#phi").value
 
         if (rocket.position.y <= 0) {
             dz[0] = dz[1] = dz[2] = dz[3] = dz[4] = dz[5] = 0
@@ -197,10 +197,27 @@ const updateCamera = () => {
 
 
 
+// Start sim button 
+document.getElementById('start').addEventListener("click", function () {
+    loop()
+    this.disabled = true
+})
 
+document.getElementById("restart").addEventListener("click", function restart() {
+    window.cancelAnimationFrame(reqAnim);
 
+    dz[0] = dz[1] = dz[2] = dz[3] = dz[4] = dz[5] = 0 // Reset inital
 
+    rocket.position.y = 0
+    camera.position.y = 0
+    rocket.rotation.z = 0
+    light.position.y = 0
 
+    loop()
+    window.cancelAnimationFrame(reqAnim);
+})
+
+let reqAnim
 
 const loop = () => {
     // setupKeyLogger()
@@ -211,7 +228,7 @@ const loop = () => {
     generateStars(rocket, stars)
 
     renderer.render(scene, camera)
-    window.requestAnimationFrame(loop)
+    reqAnim = window.requestAnimationFrame(loop)
 }
 
 

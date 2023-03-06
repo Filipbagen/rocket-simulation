@@ -3,6 +3,7 @@ import { getAirDensity } from "./getAirDensity"
 import { getGravity } from "./getGravity"
 import { getThrust } from "./getThrust"
 import { rocketMass, fuelMass } from "./mass"
+import { Fdrag } from "./Fdrag"
 
 const thetaInput = document.querySelector("#theta")
 const phiInput = document.querySelector("#phi")
@@ -23,9 +24,7 @@ function rocketEquation(y, clock) {
     let altitude = y[2]
     let dy = new Array(6).fill(0); // Initialize output
 
-    let rho = getAirDensity(altitude) // Air density, DONE
-    let v = Math.sqrt(Math.pow(y[3], 2) + Math.pow(y[4], 2) + Math.pow(y[5], 2)) // Velocity
-    let Fdrag = (Cd * A * rho * Math.pow(v, 2)) / 2 // Drag force on the rocket
+    let rho = getAirDensity(altitude)
     let Fthrust = getThrust(clock.elapsedTime)
     let m = rocketMass(fuelMass(clock.elapsedTime))
     let g = getGravity(altitude) // DONE
@@ -34,9 +33,9 @@ function rocketEquation(y, clock) {
     dy[1] = y[4] // y velocity
     dy[2] = y[5] // z velocity
 
-    dy[3] = (Fthrust * Math.sin(theta) * Math.cos(phi) - Fdrag * y[3]) / m // x acceleration
-    dy[4] = (Fthrust * Math.sin(theta) * Math.sin(phi) - Fdrag * y[4]) / m // y acceleration
-    dy[5] = (Fthrust * Math.cos(theta) - Fdrag * y[5] - m * g) / m // z acceleration
+    dy[3] = (Fthrust * Math.sin(theta) * Math.cos(phi) - Fdrag(rho, y[3], y)) / m // x acceleration
+    dy[4] = (Fthrust * Math.sin(theta) * Math.sin(phi) - Fdrag(rho, y[4], y)) / m // y acceleration
+    dy[5] = (Fthrust * Math.cos(theta) - Fdrag(rho, y[5], y) - m * g) / m // z acceleration
 
     return dy
 }

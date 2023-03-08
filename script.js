@@ -61,7 +61,7 @@ const createScene = () => {
 // Light
 let light
 const createLight = () => {
-    light = new THREE.AmbientLight(0xffffff, 1, 100)
+    light = new THREE.AmbientLight(0xffffff, 0.8, 100)
     light.position.z = 30
     scene.add(light)
 }
@@ -106,8 +106,8 @@ const createEarth = () => {
     loader.load('earth.glb', function (gltf) {
 
         earth = gltf.scene
-        earth.scale.set(10, 10, 10)
-        earth.position.y = -100
+        earth.scale.set(50, 50, 10)
+        earth.position.y = -700
         earth.position.x = 30
 
         scene.add(earth)
@@ -174,8 +174,8 @@ const updateRocket = (delta) => {
         rocket.position.z = dz[1]
         rocket.position.y = dz[2]
 
-        rocket.rotation.x = document.querySelector("#theta").value
-        rocket.rotation.z = document.querySelector("#phi").value
+        rocket.rotation.z = document.querySelector("#theta").value
+        rocket.rotation.y = document.querySelector("#phi").value
 
         if (rocket.position.y <= 0) {
             dz[0] = dz[1] = dz[2] = dz[3] = dz[4] = dz[5] = 0
@@ -187,18 +187,37 @@ const updateCamera = () => {
     camera.position.x = dz[0]
     camera.position.y = dz[2]
     // camera.position.z = dz[1]
+
+    // Zoom on scroll wheel
+    document.addEventListener('mousewheel', (event) => {
+        camera.position.z += event.deltaY / 500
+    })
 }
 
 
 
 
+// Start sim button 
+document.getElementById('start').addEventListener("click", function () {
+    loop()
+    this.disabled = true
+})
 
+document.getElementById("restart").addEventListener("click", function restart() {
+    window.cancelAnimationFrame(reqAnim);
 
+    dz[0] = dz[1] = dz[2] = dz[3] = dz[4] = dz[5] = 0 // Reset inital
 
+    rocket.position.y = 0
+    camera.position.y = 0
+    rocket.rotation.z = 0
+    light.position.y = 0
 
+    loop()
+    window.cancelAnimationFrame(reqAnim);
+})
 
-
-
+let reqAnim
 
 const loop = () => {
     // setupKeyLogger()
@@ -209,7 +228,7 @@ const loop = () => {
     generateStars(rocket, stars)
 
     renderer.render(scene, camera)
-    window.requestAnimationFrame(loop)
+    reqAnim = window.requestAnimationFrame(loop)
 }
 
 
@@ -223,17 +242,8 @@ const init = () => {
     createNewBall()
     createRocket()
     createStars()
-
-    // Stars
-    // let skyBox = new THREE.BoxGeometry(120, 120, 120);
-    // let skyBoxMaterial = new THREE.MeshBasicMaterial({
-    //     map: getRandomStarField(600, 2048, 2048),
-    //     side: THREE.BackSide
-    // })
-    // let sky = new THREE.Mesh(skyBox, skyBoxMaterial)
-    // scene.add(sky)
-
     loop()
 }
 
-window.addEventListener('load', init, false);
+window.addEventListener('load', init, false)
+

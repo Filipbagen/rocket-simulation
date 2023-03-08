@@ -1,16 +1,47 @@
----
-name: Build and Deploy Three.js App to GitHub Pages
+# ---
+# name: Build and Deploy Three.js App to GitHub Pages
+# on:
+#   push:
+#     branches: [ main ]
+
+# jobs:
+#   build-and-deploy:
+#     name: Build and Deploy
+#     runs-on: ubuntu-latest
+
+#     steps:
+#     - name: Checkout
+#       uses: actions/checkout@v2
+
+#     - name: Install dependencies
+#       run: npm install
+
+#     - name: Build project
+#       run: npm run build
+
+#     # - name: Test
+#     #   run: npm run test
+
+#     - name: Deploy
+#       run: |
+#         git config --global user.name 'filipbagen'
+#         git config --global user.email 'filip.bagen@gmail.com'
+#         git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}    
+#         npm run deploy
+
+name: Deploy to GitHub Pages
+
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
 
 jobs:
   build-and-deploy:
-    name: Build and Deploy
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout
+    - name: Checkout repository
       uses: actions/checkout@v2
 
     - name: Install dependencies
@@ -19,12 +50,8 @@ jobs:
     - name: Build project
       run: npm run build
 
-    # - name: Test
-    #   run: npm run test
-
-    - name: Deploy
-      run: |
-        git config --global user.name 'filipbagen'
-        git config --global user.email 'filip.bagen@gmail.com'
-        git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}    
-        npm run deploy
+    - name: Deploy to GitHub Pages
+      uses: JamesIves/github-pages-deploy-action@4.1.4
+      with:
+        branch: gh-pages
+        folder: dist

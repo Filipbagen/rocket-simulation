@@ -3,6 +3,7 @@ name: Build and Deploy Three.js App to GitHub Pages
 on:
   push:
     branches: [ main ]
+
 jobs:
   build-and-deploy:
     name: Build and Deploy
@@ -12,7 +13,10 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
 
-    - name: Build
+    - name: Install dependencies
+      run: npm install
+
+    - name: Build project
       run: npm run build
 
     # - name: Test

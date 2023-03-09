@@ -1,3 +1,4 @@
+@import url(https://fonts.googleapis.com/css2?family=Audiowide&display=swap);
 * {
     margin: 0;
     padding: 0;
@@ -7,18 +8,22 @@
 html,
 body {
     overflow: hidden;
+    font-family: 'Audiowide', cursive;
 }
 
 .webgl {
-    position: absolute;
-    top: 0;
-    left: 0;
+    /* position: absolute; */
+    background: linear-gradient(#144066, #c7c9ea);
+    background-color: white;
+    /* top: 0; */
+    /* left: 0; */
 }
 
 .info {
-    z-index: 1;
+    /* z-index: 1; */
     position: relative;
     background-color: white;
+    /* padding: 30px; */
 }
 
 /*# sourceMappingURL=main.css.map*/

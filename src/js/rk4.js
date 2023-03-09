@@ -5,13 +5,13 @@ import { rocketEquation } from "./rocketEquation"
 
 let values = []
 
-function rk4(z0, h, clock) {
+function rk4(z0, h, clock, timeFactor) {
     let z
 
-    let k1 = rocketEquation(z0, clock)
-    let k2 = rocketEquation(sumArray(z0, multiplyArray(k1, (h / 2))), clock)
-    let k3 = rocketEquation(sumArray(z0, multiplyArray(k2, (h / 2))), clock)
-    let k4 = rocketEquation(sumArray(z0, multiplyArray(k3, h)), clock)
+    let k1 = rocketEquation(z0, clock, timeFactor)
+    let k2 = rocketEquation(sumArray(z0, multiplyArray(k1, (h / 2))), clock, timeFactor)
+    let k3 = rocketEquation(sumArray(z0, multiplyArray(k2, (h / 2))), clock, timeFactor)
+    let k4 = rocketEquation(sumArray(z0, multiplyArray(k3, h)), clock, timeFactor)
 
     // Next step
     z = (sumArray(z0,

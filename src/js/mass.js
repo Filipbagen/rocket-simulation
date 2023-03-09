@@ -1,7 +1,7 @@
 // Source
 // https://www.spaceflightinsider.com/hangar/falcon-9/
 
-const fuelMass = (elapsedTime) => {
+const fuelMass = (elapsedTime, timeFactor) => {
 
     //  Constant parameters
     let firstStagePropellantMass = 395700
@@ -10,7 +10,8 @@ const fuelMass = (elapsedTime) => {
     let burnRate = 1451.496 // fuel burn rate in kg / s
 
     // Calculate fuel mass
-    let fuelMass = firstStagePropellantMass - burnRate * elapsedTime
+    let fuelMass = firstStagePropellantMass - burnRate * elapsedTime * timeFactor
+    document.querySelector('#fuel').innerHTML = Math.round(fuelMass / firstStagePropellantMass * 100) + ' % fuel left'
 
     // Check for negative mass
     if (fuelMass < 0) {

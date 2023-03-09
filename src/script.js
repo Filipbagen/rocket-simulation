@@ -17,6 +17,10 @@ const createScene = () => {
 
     // Scene
     scene = new THREE.Scene()
+    // scene.background = new THREE.Color(0x000000)
+
+    // renderer = new THREE.WebGLRenderer({ alpha: true }); // init like this
+    // renderer.setClearColor(0x000000, 0); // second param is opacity, 0 => transparent
 
     // Sizes
     const sizes = {
@@ -61,7 +65,7 @@ const createScene = () => {
 // Light
 let light
 const createLight = () => {
-    light = new THREE.AmbientLight(0xffffff, 0.8, 100)
+    light = new THREE.AmbientLight(0xffffff, 0.7, 100)
     light.position.z = 30
     scene.add(light)
 }
@@ -92,11 +96,11 @@ const createNewBall = () => {
 }
 
 const createRocket = () => {
-    loader.load('falcon9.glb', function (gltf) {
+    loader.load('spacexfalcon9.glb', function (gltf) {
 
         rocket = gltf.scene
         // rocket.rotation.x = -90
-        // rocket.scale.set(.005, .005, .005)
+        rocket.scale.set(.5, .5, .5)
 
         scene.add(rocket)
     })
@@ -161,13 +165,14 @@ let vz0 = 0 // Initial z velocity
 
 // Initial conditions
 y0 = [x0, y0, z0, vx0, vy0, vz0]
+let timeFactor = 1
 
 let clock = new THREE.Clock()
 
-let dz = rk4(y0, 0.016, clock)
+let dz = rk4(y0, 0.016, clock, timeFactor)
 
 const updateRocket = (delta) => {
-    dz = rk4(dz, delta, clock)
+    dz = rk4(dz, delta, clock, timeFactor)
 
     if (rocket) {
         rocket.position.x = dz[0]
@@ -185,7 +190,7 @@ const updateRocket = (delta) => {
 
 const updateCamera = () => {
     camera.position.x = dz[0]
-    camera.position.y = dz[2]
+    camera.position.y = dz[2] - 10
     // camera.position.z = dz[1]
 
     // Zoom on scroll wheel
@@ -194,36 +199,14 @@ const updateCamera = () => {
     })
 }
 
-
-
-
-// Start sim button 
-document.getElementById('start').addEventListener("click", function () {
-    loop()
-    this.disabled = true
-})
-
-document.getElementById("restart").addEventListener("click", function restart() {
-    window.cancelAnimationFrame(reqAnim);
-
-    dz[0] = dz[1] = dz[2] = dz[3] = dz[4] = dz[5] = 0 // Reset inital
-
-    rocket.position.y = 0
-    camera.position.y = 0
-    rocket.rotation.z = 0
-    light.position.y = 0
-
-    loop()
-    window.cancelAnimationFrame(reqAnim);
-})
-
 let reqAnim
+
 
 const loop = () => {
     // setupKeyLogger()
     // setupKeyControls(ball)
 
-    updateRocket(clock.getDelta())
+    updateRocket(clock.getDelta() * timeFactor)
     updateCamera()
     generateStars(rocket, stars)
 
@@ -239,11 +222,44 @@ const init = () => {
     // createEarth()
     // createSun()
     // createBall()
-    createNewBall()
+    // createNewBall()
     createRocket()
     createStars()
+
+
     loop()
+    renderer.render(scene, camera)
 }
 
 window.addEventListener('load', init, false)
 
+// Buttons 
+
+// Start sim button 
+document.querySelector('#start').addEventListener("click", function () {
+    console.log('start')
+    // loop();
+    // window.requestAnimationFrame(loop)
+    // this.disabled = true;
+})
+
+// Restart
+document.querySelector("#restart").addEventListener("click", function () {
+    console.log('restart')
+    init()
+})
+
+// Pause sim button 
+document.querySelector('#pause').addEventListener("click", function () {
+    console.log('pause')
+    window.cancelAnimationFrame(reqAnim)
+    // document.getElementById('start').disabled = false;
+})
+
+checkbox.addEventListener('change', function () {
+    if (this.checked) {
+        timeFactor = 10
+    } else {
+        timeFactor = 1
+    }
+})

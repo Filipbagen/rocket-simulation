@@ -10,6 +10,7 @@ const A = 1 // Reference area of the rocket
 
 const Fdrag = (airDensity, vel, y) => {
     let v = velocity(y) // Velocity
+    document.querySelector('#velocity').innerHTML = Math.floor(v) + ' m/s'
 
     return (Cd * A * airDensity * Math.abs(v) * vel) / 2
 }

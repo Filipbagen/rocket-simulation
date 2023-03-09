@@ -15,18 +15,19 @@ let theta // Angle in radians of thrust vector in y-z plane
 let phi // Angle in radians of thrust vector in x-y plane
 
 // Inputs array of position and velocity (6 values)
-function rocketEquation(y, clock) {
+function rocketEquation(y, clock, timeFactor) {
 
     // console.log(input.value)
     theta = thetaInput.value
     phi = phiInput.value
 
     let altitude = y[2]
+    document.querySelector('#altitude').innerHTML = Math.floor(altitude) + ' m'
     let dy = new Array(6).fill(0); // Initialize output
 
     let rho = getAirDensity(altitude)
     let Fthrust = getThrust(clock.elapsedTime)
-    let m = rocketMass(fuelMass(clock.elapsedTime))
+    let m = rocketMass(fuelMass(clock.elapsedTime, timeFactor))
     let g = getGravity(altitude) // DONE
 
     dy[0] = y[3] // x velocity
